@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>stuff</title>
+    </head>
+    <body>
+        <input type="text" id="name" />
+        <input type="button" id="con" value="Connect" />
+
+        <input type="text" id="message" />
+        <input type="button" id="send" value="Send" />
+
+        <script src="/socket.io.min.js"></script>
+        <script>
+            var sock;
+
+            document.getElementById('con').addEventListener('click', (e) => {
+                connect();
+                sock.emit('setup', {
+                    language: 'EN',
+                    name: document.getElementById('name').value
+                });
+            });
+
+            document.getElementById('send').addEventListener('click', (e) => {
+                sock.emit('send', {
+                    type: 'text',
+                    body: document.getElementById('message').value
+                });
+            });
+
+            function connect() {
+                sock = io();
+                console.log('connected');
+
+                console.log('Searching for room...');
+
+                sock.on('room', (id) => {
+                    console.log('Found room ' + id);
+                });
+
+                sock.on('joined', (req) => {
+                    console.log(`Someone joined: ${req.name} is ${req.language}`);
+                });
+
+                sock.on('message', (req) => {
+                    console.log(`Got message: ${JSON.stringify(req)}`);
+                })
+
+                sock.on('left', () => {
+                    console.log('Partner left');
+                });
+            }
+        </script>
+    </body>
+</html>
