@@ -151,12 +151,12 @@ const initializeMenu = () => {
             document.querySelector('.action-card--selected').classList.remove('action-card--selected');
             card.classList.add('action-card--selected');
 
+            if(selectedSectionName === STATS_SECTION) {
+                fetchMoodswings();
+                fetchStats();
+            }
             for(const c of cards) {
                 const cardSectionName = c.getAttribute('data-section-name');
-                if(selectedSectionName === STATS_SECTION) {
-                    fetchMoodswings();
-                    fetchStats();
-                }
 
                 if(cardSectionName === selectedSectionName) {
                     document.querySelector(`.chat-section .${cardSectionName}`).classList.remove(`${cardSectionName}--hidden`);
@@ -302,8 +302,6 @@ const fetchMoodswings = async () => {
 
 const fetchStats = async () => {
     axios.get('https://pcd2.exom.dev/stats').then((response) => {
-        console.log('stats reponse:');
-        console.log(response.data);
         let countriesDataString = '';
         for(const country in response.data) {
             countriesDataString += `<br><span>${country}: ${response.data[country]}</span>`
