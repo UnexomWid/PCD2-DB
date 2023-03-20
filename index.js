@@ -93,6 +93,12 @@ const PORT = 3004;
 
                 data[socket.dataId].state = 'searching';
 
+                try {
+                    await db.execute('INSERT INTO logs(ip, language) VALUES(?, ?)', [socket.request.socket.remoteAddress, req.language]);
+                } catch(ex) {
+                    console.log(ex);
+                }
+
                 for (let room of rooms) {
                     if (room.socks.length === 1) {
                         room.socks.push(socket);
@@ -128,12 +134,6 @@ const PORT = 3004;
                 data[socket.dataId].room = room;
 
                 socket.emit('room', room.id);
-
-                try {
-                    await db.execute('INSERT INTO logs(ip, language) VALUES(?, ?)', [socket.request.socket.remoteAddress, req.language]);
-                } catch(ex) {
-                    console.log(ex);
-                }
             }
         });
 
