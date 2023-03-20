@@ -261,8 +261,8 @@ const fetchTextElementInfo = async (elementInfo, showTranslation, showMood) => {
     axios.post('https://serverse.ew.r.appspot.com/analyze', {
         type: 'text',
         data: elementInfo.text,
-        from: partnerLanguage,
-        to: userLanguage
+        from: partnerLanguage ?? userLanguage,
+        to: userLanguage ?? partnerLanguage
     }).then((response) => {
         elementInfo.translation = response.data.translation;
         elementInfo.mood = response.data.sentiment;
@@ -313,8 +313,3 @@ const fetchStats = async () => {
         console.log(error);
     });
 }
-
-
-
-
-
