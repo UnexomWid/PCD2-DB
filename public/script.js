@@ -292,7 +292,7 @@ const fetchMoodswings = async () => {
         moodList.push(messagesMap[messageId].mood);
     }
     axios.post('https://us-central1-serverse.cloudfunctions.net/function-4', {
-        data: moodList
+        data: !moodList.length ? [0] : moodList
     }).then((response) => {
         document.querySelector('.stats-moodswings span').innerHTML = response.data.moodswings;
     }).catch((error) => {
