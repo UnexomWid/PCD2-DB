@@ -51,6 +51,13 @@ const initializeWebSocket = () => {
 
     socket.on('message', (req) => {
         if(req.type === 'text') addTextMessage(false, req.body);
+        if(req.type === 'image') {
+            var reader = new FileReader();
+            reader.onload = (event) => {
+                addImageMessage(false, event.target.result);
+            };
+            reader.readAsDataURL(new Blob([req.body]));
+        }
     })
 
     socket.on('left', () => {
@@ -124,6 +131,24 @@ const initializeChat = () => {
     })
     document.querySelector('.send-button').addEventListener('click', () => sendMessage());
     document.querySelector('.chat-section').addEventListener('click', () => document.querySelector('.input-container .input').focus());
+    textInput.addEventListener('paste', (pasteEvent) => {
+        var item = pasteEvent.clipboardData.items[0];
+ 
+        if (item.type.indexOf("image") === 0) {
+            var blob = item.getAsFile();
+    
+            var reader = new FileReader();
+            reader.onload = (event) => {
+                addImageMessage(true, event.target.result);
+                socket.emit('send', {
+                    type: 'image',
+                    body: blob
+                });
+            };
+    
+            reader.readAsDataURL(blob);
+        }
+    });
 
     const target = document.querySelector('.messages');
 
@@ -205,6 +230,23 @@ const addTextMessage = (mine, text) => {
     messageId += 1;
 }
 
+const addImageMessage = (mine, image) => {
+    const messageDiv = document.createElement('div');
+    const imgId = crypto.randomUUID();
+    messageDiv.classList.add('message-container');
+    messageDiv.innerHTML = `
+        <div class="message-image ${mine ? 'mine' : 'theirs'}">
+            <img class="${imgId}" src="${image}" alt="">
+        </div>
+        <div class="message-actions ${mine ? 'mine' : 'theirs'}">
+            <div class="message-read-icon" onclick="showImageCaption(\'${image}\', \'${mine ? '1' : ''}\')">
+                <span class="material-symbols-rounded">visibility</span>
+            </div>
+        </div>
+    `;
+    document.querySelector('.messages').appendChild(messageDiv);
+}
+
 const addSystemMessage = (text) => {
     document.querySelector('.messages').innerHTML += `
         <div class="message-container">
@@ -257,6 +299,33 @@ const showMessageMood = (messageId) => {
     elementInfo.isMoodShowing = true;
 }
 
+const moodAll = () => {
+    for(const messageId in messagesMap) {
+        showMessageMood(messageId);
+    }
+}
+
+const showImageCaption = (img, mine) => {
+    convertImageToBase64(img, (base64String) => {
+        fetchImgCaption(base64String, mine)
+    });
+}
+
+const convertImageToBase64 = (imgUrl, callback) => {
+    const image = new Image();
+    image.crossOrigin='anonymous';
+    image.src = imgUrl;
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.height = image.naturalHeight;
+      canvas.width = image.naturalWidth;
+      ctx.drawImage(image, 0, 0);
+      const dataUrl = canvas.toDataURL();
+      callback && callback(dataUrl)
+    }
+}
+
 const fetchTextElementInfo = async (elementInfo, showTranslation, showMood) => {
     axios.post('https://serverse.ew.r.appspot.com/analyze', {
         type: 'text',
@@ -273,6 +342,21 @@ const fetchTextElementInfo = async (elementInfo, showTranslation, showMood) => {
     });
 }
 
+const fetchImgCaption = async (base64Img, mine) => {
+    axios.post('https://serverse.ew.r.appspot.com/analyze', {
+        type: 'image',
+        data: base64Img,
+        from: partnerLanguage ?? userLanguage,
+        to: userLanguage ?? partnerLanguage
+    }).then((response) => {
+        addTextMessage(mine, response.data.caption);
+        messagesMap[messageId - 1].translation = response.data.translation;
+        messagesMap[messageId - 1].mood = response.data.sentiment;
+    }).catch((error) => {
+        console.log(error);
+    });
+}
+
 const translateAll = () => {
     for(const messageId in messagesMap) {
         if(messagesMap[messageId].mine) continue;
@@ -280,16 +364,10 @@ const translateAll = () => {
     }
 }
 
-const moodAll = () => {
-    for(const messageId in messagesMap) {
-        showMessageMood(messageId);
-    }
-}
-
 const fetchMoodswings = async () => {
     const moodList = [];
     for(let messageId in messagesMap) {
-        moodList.push(messagesMap[messageId].mood);
+        if(messagesMap[messageId].mood) moodList.push(messagesMap[messageId].mood);
     }
     axios.post('https://us-central1-serverse.cloudfunctions.net/function-4', {
         data: !moodList.length ? [0] : moodList
@@ -311,3 +389,9 @@ const fetchStats = async () => {
         console.log(error);
     });
 }
+
+
+
+
+
+
