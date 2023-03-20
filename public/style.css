@@ -273,6 +273,17 @@ body {
 }
 
 .chat-column .chat-section .chat {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+  height: 100%;
   margin-top: auto;
   -webkit-transition: .4s;
   transition: .4s;
