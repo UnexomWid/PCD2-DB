@@ -35,7 +35,7 @@ const initializeHtml = () => {
 
 const initializeWebSocket = () => {
     // socket = io("ws://127.0.0.1:3004");
-    socket = io("wss://pcd2.exom.dev");
+    socket = io("wss://pcd2.gohtml.io");
 
     socket.on('room', (id) => {
         addSystemMessage(`Connected to room ${id}.`);
@@ -379,7 +379,7 @@ const fetchMoodswings = async () => {
 }
 
 const fetchStats = async () => {
-    axios.get('https://pcd2.exom.dev/stats').then((response) => {
+    axios.get('https://pcd2.gohtml.io/stats').then((response) => {
         let countriesDataString = '';
         for(const country in response.data) {
             countriesDataString += `<br><span>${country}: ${response.data[country]}</span>`
