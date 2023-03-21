@@ -48,9 +48,9 @@ The backend and frontend components were depoyed on a Vultr VPS (Cloud Compute) 
 
 # Performance analysis
 
-The delay between HTTP responses from the deployed server was tested.
+The delay between HTTP responses from the deployed server (i.e. the initial page load) was tested.
 
-- **Average HTTP Server Delay**:
+- **Average HTTP Server Delay**: 56ms
 
 The biggest bottleneck of the application consists of the cloud components (more specifically, the database along with all the translation and analysis components). The delay between when a message is sent and when it arrives is neglibigle when compared to the delay caused by the cloud components.
 
@@ -58,6 +58,6 @@ Therefore, only the delays of the cloud components were tested.
 
 Average delay:
 
-- **Database**:
-- **Translation and Sentiment Analysis**:
-- **Moodswings FaaS**:
+- **Database**: 126ms
+- **Translation and Sentiment Analysis**: 1.4s
+- **Moodswings FaaS**: 291ms
