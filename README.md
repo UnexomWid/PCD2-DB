@@ -9,7 +9,7 @@
 
 We developed a chat application that allows people to talk in multiple languages while understanding each other. The main features include:
 
-- find people to chat with in real time
+- find people to chat with in real time (users are automatically paired up)
 - translate the messages in your native language
 - detect text in images and translate it
 - check the general sentiment of a message to better understand its meaning (positive, negative)
