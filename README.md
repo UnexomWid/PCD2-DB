@@ -30,14 +30,14 @@ We developed a chat application that allows people to talk in multiple languages
 
 ## Analyzer
 
-- **Server**: Flask
-- **Translation**: Google Cloud
-- **Sentiment Analysis**: Google Cloud
-- **OCR**: Google Cloud
+- **Server**: Python (Flask) - Google AppEngine
+- **Translation**: Google Translation AI
+- **Sentiment Analysis**: Google Natural Language AI
+- **OCR**: Google Vision AI
 
 ## Moodswings
 
-- **FaaS**: Google Cloud
+- **FaaS**: Google Cloud Functions
 
 # Deployment
 
@@ -48,9 +48,9 @@ The backend and frontend components were depoyed on a Vultr VPS (Cloud Compute) 
 
 # Performance analysis
 
-The delay between HTTP responses from the deployed server (i.e. the initial page load) was tested.
+The delay between HTTP responses from the deployed server was tested.
 
-- **Average HTTP Server Delay**: 56ms
+- **Average HTTP Server Delay**:
 
 The biggest bottleneck of the application consists of the cloud components (more specifically, the database along with all the translation and analysis components). The delay between when a message is sent and when it arrives is neglibigle when compared to the delay caused by the cloud components.
 
@@ -58,6 +58,6 @@ Therefore, only the delays of the cloud components were tested.
 
 Average delay:
 
-- **Database**: 126ms
-- **Translation and Sentiment Analysis**: 1.4s
-- **Moodswings FaaS**: 291ms
+- **Database**:
+- **Translation and Sentiment Analysis**:
+- **Moodswings FaaS**:
